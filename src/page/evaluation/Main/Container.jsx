@@ -1,15 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import Main from './Main.jsx';
+import Main from "./Main.jsx";
 
-import { hot } from 'react-hot-loader';
+import { hot } from "react-hot-loader";
 
+const Container = () => <Main />;
 
-class Container extends React.Component {
-
-    render() {
-        return <Main />;
-    }
-}
-
-export default hot(module) (Container);
+export default hot(module)(Container);

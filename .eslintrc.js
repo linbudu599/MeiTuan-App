@@ -12,13 +12,13 @@ module.exports = {
   },
   plugins: ["html", "react"],
   // extends: ['alloy', 'alloy/typescript'],
-  // extends: "standard",
+  extends: "standard",
   // extends: ["plugin:vue/essential"],
   rules: {
     //启用额外的规则或覆盖默认的规则
-    // indent: ["error", 2], //软缩进
-    // quotes: ["error", "double"], //使用双引号
-    // semi: ["error", "always"] //句尾强制分号结尾
+    indent: ["error", 2], //软缩进
+    quotes: ["error", "double"], //使用双引号
+    semi: ["error", "always"] //句尾强制分号结尾
     // no-console: "error",//不允许console语句
     //0 1 2
     // arrow-parens: 0,//箭头函数需要用小括号括起来
