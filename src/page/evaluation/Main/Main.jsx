@@ -1,85 +1,70 @@
-import 'component/common.scss';
-import './Main.scss';
+import React, { useEffect, useState, useRef } from "react";
 
+import NavHeader from "component/NavHeader/NavHeader.jsx";
 
-import React from 'react';
+import "component/common.scss";
+import "./Main.scss";
 
-import NavHeader from 'component/NavHeader/NavHeader.jsx';
+const maxCount = 140;
 
+const Main = () => {
+  const [count, setCount] = useState(maxCount);
+  const [startIdx, setStartIdx] = useState(0);
+  const [chineseInputing, setChineseInputing] = useState();
 
-class Main extends React.Component {
-    constructor(props) {
-        super(props);
+  const commentInput = useRef(null);
 
-        // 最多可输入的字符数
-        this.maxCount = 140;
+  useEffect(() => {
+    commentInput.current.addEventListener("compositionstart", () => {
+      setChineseInputing(true);
+    });
+    commentInput.current.addEventListener("compositionend", e => {
+      setChineseInputing(false);
+      onIuput(e.target.value);
+    });
+    return () => {};
+  }, []);
 
-        this.state = {
-            // 还剩多少字符可输入
-            count: this.maxCount,
-            // 用户当前点击的星号码
-            startIndex: 0
-        }
+  const onIuput = value => {
+    let num = value.length;
+    if (!chineseInputing) {
+      setCount(maxCount - num);
     }
-    componentDidMount(){
-        this.commentInput.addEventListener('compositionstart', ()=>{
-            this.chineseInputing = true;
-        });
-        this.commentInput.addEventListener('compositionend', (e)=>{
-            this.chineseInputing = false;
-            this.onIuput(e.target.value);
-        });
-    }
-    /**
-     * 用户输入回调
-     */
-    onIuput(value){
-        let num = value.length;
-        if (!this.chineseInputing) {
-            this.setState({
-                count: this.maxCount - num
-            });
-        }
+  };
 
-    }
-    /**
-     * 点击评分
-     */
-    doEva(i){
-        this.setState({
-            startIndex: i + 1
-        });
-    }
-    /**
-     * 渲染评分用的星
-     */
-    renderStar(){
-        let array = [];
-        for (let i = 0 ; i<5 ;i++) {
-            let cls = i >= this.state.startIndex ? "star-item" : "star-item light";
-            array.push(<div onClick={()=>this.doEva(i)} key={i} className={cls}></div>);
-        }
+  const doEva = i => {
+    setStartIdx(i + 1);
+  };
 
-        return array;
+  const renderStar = () => {
+    let array = [];
+    for (let i = 0; i < 5; i++) {
+      let cls = i >= startIdx ? "star-item" : "star-item light";
+      array.push(<div onClick={() => doEva(i)} key={i} className={cls}></div>);
     }
-    render(){
-        return (
-            <div className="content">
-                <NavHeader title="评价" />
-                <div className="eva-content">
-                    <div className="star-area">
-                        {this.renderStar()}
-                    </div>
-                    <div className="comment">
-                        <textarea ref={(ref)=>{this.commentInput = ref}} onChange={(e)=>this.onIuput(e.target.value)} minLength="140" placeholder="亲，菜品的口味如何，商家的服务是否周到?" className="comment-input"></textarea>
-                        <span className="count">{this.state.count}</span>
-                    </div>
-                    <p className="one-line product-name">+厚切鸡排 香辣口水鸡饭. 中辣</p>
-                </div>
-                <div className="submit">提交评价</div>
-            </div>
-        );
-    }
-}
+    return array;
+  };
+
+  return (
+    <div className="content">
+      <NavHeader title="评价" />
+      <div className="eva-content">
+        <div className="star-area">{renderStar()}</div>
+        <div className="comment">
+          <textarea
+            ref={commentInput}
+            onChange={e => onIuput(e.target.value)}
+            minLength="140"
+            placeholder="亲，菜品的口味如何，商家的服务是否周到?"
+            className="comment-input"
+          ></textarea>
+          <span className="count">{count}</span>
+        </div>
+        <p className="one-line product-name">+厚切鸡排 香辣口水鸡饭. 中辣</p>
+      </div>
+      <div className="submit">提交评价</div>
+    </div>
+  );
+};
 
 export default Main;

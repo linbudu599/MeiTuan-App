@@ -18,13 +18,10 @@
 - [x] 升级核心依赖，添加辅助依赖
   - Babel --> 7.0
   - Stylelint & Eslint(alloy及各种plugin) & Tslint ...等
-  - friendly-errors-webpack-plugin & webpackbar
-  - mini-css-extract-plugin
-  - purify-css & purifycss-webpack
-  - speed-measure-webpack-plugin & webpack-visualizer-plugin
   - ...
 
 - [ ] 区分开发/测试/部署环境
+- [x] Hooks、FC初步重构所有组件，一个类组件不留
 - [ ] tsx重构组件，耦合⬇ 内聚⬆
 - [ ] Koa & Ts 搭建服务端，提供 RestFul Api（如果学了GraphQL就上它）
 - [ ] 单元测试、UI测试等

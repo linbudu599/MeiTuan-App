@@ -1,7 +1,7 @@
 import { CHANGE_TAB,GET_FILTER_DATA,CHANGE_FILTER } from './actionTypes';
 import axios from 'axios';
 
-export const changeTab = (obj)=> (dispatch) =>{
+export const changeTabAction = (obj)=> (dispatch) =>{
 
     dispatch({
         type: CHANGE_TAB,

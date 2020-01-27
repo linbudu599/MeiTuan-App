@@ -1,95 +1,89 @@
-import './Menu.scss';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 
-import React from 'react';
+import { getListData, itemClick } from "../actions/menuAction";
 
-import { connect } from 'react-redux';
+import MenuItem from "./MenuItem/MenuItem";
+import ShopBar from "./ShopBar/ShopBar";
 
-import { getListData, itemClick } from '../actions/menuAction';
+import "./Menu.scss";
 
-import MenuItem from './MenuItem/MenuItem';
-import ShopBar from './ShopBar/ShopBar';
+const Menu = ({ dispatch, currentLeftIndex, listData }) => {
+  useEffect(() => {
+    dispatch(getListData());
+    return () => {};
+  }, [listData]);
 
-/**
- * 点菜tab页面
- * @description <Menu />
- */
+  const renderRightList = array => {
+    let _array = array || [];
+    return _array.map((item, index) => {
+      if (!item.chooseCount) {
+        item.chooseCount = 0;
+      }
+      return <MenuItem key={index} data={item} _index={index}></MenuItem>;
+    });
+  };
 
-class Menu extends React.Component {
-    constructor(props) {
-        super(props);
-        this.props.dispatch(getListData());
+  const handleItemClick = index => {
+    dispatch(
+      itemClick({
+        currentLeftIndex: index
+      })
+    );
+  };
+
+  const renderRight = () => {
+    let index = currentLeftIndex;
+    let array = listData.food_spu_tags || [];
+    let currentItem = array[index];
+
+    if (currentItem) {
+      let title = (
+        <p key={1} className="right-title">
+          {currentItem.name}
+        </p>
+      );
+      return [
+        title,
+        <div key={2} className="right-list">
+          <div className="right-list-inner">
+            {renderRightList(currentItem.spus)}
+          </div>
+        </div>
+      ];
+    } else {
+      return null;
     }
-    renderRightList(array){
-        let _array = array || [];
-        return _array.map((item, index)=>{
-            if (!item.chooseCount) {
-                item.chooseCount = 0;
-            }
-            return <MenuItem key={index} data={item} _index={index}></MenuItem>
-        });
-    }
-    /**
-     * 点击切换右边数据
-     */
-    itemClick(index){
-        this.props.dispatch(itemClick({
-            currentLeftIndex: index
-        }));
-    }
-    /**
-     * 渲染右边的列表
-     */
-    renderRight(){
-        let index = this.props.currentLeftIndex;
-        let array = this.props.listData.food_spu_tags || [];
-        let currentItem = array[index];
+  };
 
-        if (currentItem) {
-            let title = <p key={1} className="right-title">{currentItem.name}</p>
-            return [
-                title,
-                <div key={2} className="right-list"><div className="right-list-inner">{this.renderRightList(currentItem.spus)}</div></div>
-            ]
-        } else {
-            return null;
-        }
-    }
-    /**
-     * 渲染左边的列表
-     */
-    renderLeft(){
-        let list = this.props.listData.food_spu_tags || [];
+  const renderLeft = () => {
+    let list = listData.food_spu_tags || [];
 
-        return list.map((item, index)=>{
-            let cls = this.props.currentLeftIndex === index ? 'left-item active' : 'left-item';
-            return (
-                <div onClick={()=>this.itemClick(index)} key={index} className={cls}>
-                    <div className="item-text">{item.icon ? <img className="item-icon" src={item.icon} /> : null}{item.name}</div>
-                </div>
-            );
-        });
-    }
-    render(){
+    return list.map((item, index) => {
+      let cls = currentLeftIndex === index ? "left-item active" : "left-item";
+      return (
+        <div onClick={() => handleItemClick(index)} key={index} className={cls}>
+          <div className="item-text">
+            {item.icon ? <img className="item-icon" src={item.icon} /> : null}
+            {item.name}
+          </div>
+        </div>
+      );
+    });
+  };
 
-        return (
-            <div className="menu-inner">
-                <div className="left-bar">
-                    <div className="left-bar-inner">
-                        {this.renderLeft()}
-                    </div>
-                </div>
-                <div className="right-content">
-                    {this.renderRight()}
-                </div>
-                <ShopBar />
-            </div>
-        );
-    }
-}
+  return (
+    <div className="menu-inner">
+      <div className="left-bar">
+        <div className="left-bar-inner">{renderLeft()}</div>
+      </div>
+      <div className="right-content">{renderRight()}</div>
+      <ShopBar />
+    </div>
+  );
+};
 
-export default connect(
-    state =>({
-        listData: state.menuReducer.listData,
-        currentLeftIndex: state.menuReducer.currentLeftIndex
-    })
-)(Menu);
+export default connect(({ menuReducer: { listData, currentLeftIndex } }) => ({
+  listData,
+  currentLeftIndex
+}))(Menu);
