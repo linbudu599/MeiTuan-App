@@ -1,21 +1,14 @@
-import './Loading.scss';
+import React from "react";
 
-import React from 'react';
+import "./Loading.scss";
 
-/**
- * Loading组件
- */
+const Loading = ({ isend }) => {
+  let str = "加载中";
+  if (isend) {
+    str = "已完成";
+  }
 
-class Loading extends React.Component {
-    render(){
-        let str = '加载中';
-        if (this.props.isend) {
-            str = '已完成';
-        }
-
-        return <div className="loading">{str}</div>;
-    }
-
-}
+  return <div className="loading">{str}</div>;
+};
 
 export default Loading;
