@@ -1,27 +1,17 @@
-import React from 'react';
+import React from "react";
+import Header from "./Header/Header.jsx";
 
-import Header from './Header/Header.jsx';
+import Category from "./Category/Category.jsx";
+import ContentList from "./ContentList/ContentList.jsx";
 
-import Category from './Category/Category.jsx';
-
-import ContentList from './ContentList/ContentList.jsx';
-
-/**
- * @constructor <Home />
- * @description 首页tab代码
- */
-
-class Home extends React.Component {
-
-    render(){
-        return (
-            <div>
-                <Header />
-                <Category />
-                <ContentList />
-            </div>
-        );
-    }
-}
+const Home = () => {
+  return (
+    <>
+      <Header />
+      <Category />
+      <ContentList />
+    </>
+  );
+};
 
 export default Home;
