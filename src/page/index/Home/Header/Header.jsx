@@ -9,7 +9,7 @@ const Header = () => (
     <img
       className="banner-img"
       // FIXME: error img url
-      src="http://xs01.meituan.net/waimai_i/img/bannertemp.e8a6fa63.jpg"
+      src="http://xs01.meituan.net/waimai/img/bannertemp.e8a6fa63.jpg"
     />
   </div>
 );

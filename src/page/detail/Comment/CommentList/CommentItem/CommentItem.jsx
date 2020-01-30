@@ -43,7 +43,7 @@ const CommentItem = ({ data: item }) => {
         className="avatar"
         src={
           item.user_pic_url ||
-          "http://xs01.meituan.net/waimai_i/img/default-avatar.c4e0230d.png"
+          "http://xs01.meituan.net/waimai/img/default-avatar.c4e0230d.png"
         }
       />
       <div className="item-right">

@@ -3,7 +3,6 @@ import React from "react";
 import "./StarScore.scss";
 
 const StarScore = ({ score }) => {
-  console.log(score);
   const renderScore = () => {
     let wm_poi_score = score || "";
 

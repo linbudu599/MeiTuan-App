@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Loading from "component/Loading/Loading.jsx";
 import { connect } from "react-redux";
 

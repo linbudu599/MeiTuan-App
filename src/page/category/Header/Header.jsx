@@ -239,9 +239,9 @@ const Header = ({ tabs, activeKey, filterData, closePanel, dispatch }) => {
 
 export default connect(
   ({ headerReducer: { tabs, activeKey, filterData, closePanel } }) => ({
-    tabs: tabs,
-    activeKey: activeKey,
-    filterData: filterData,
-    closePanel: closePanel
+    tabs,
+    activeKey,
+    filterData,
+    closePanel
   })
 )(Header);

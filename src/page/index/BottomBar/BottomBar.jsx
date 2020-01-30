@@ -1,8 +1,8 @@
-import "./BottomBar.scss";
-
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink, withRouter } from "react-router-dom";
+
+import "./BottomBar.scss";
 
 const BottomBar = ({ history, tabs }) => {
   const changeTab = ({ key }) => {
@@ -31,8 +31,8 @@ const BottomBar = ({ history, tabs }) => {
 };
 
 export default withRouter(
-  connect(state => ({
-    tabs: state.tabReducer.tabs,
-    activeKey: state.tabReducer.activeKey
+  connect(({ tabReducer: { tabs, activeKey } }) => ({
+    tabs,
+    activeKey
   }))(BottomBar)
 );
