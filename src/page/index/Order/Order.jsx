@@ -17,9 +17,9 @@ const Order = ({ list, dispatch }) => {
     return () => {};
   }, []);
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     dispatch(getOrderData());
-  };
+  });
 
   const onLoadPage = () => {
     setPage(page => page + 1);
@@ -46,6 +46,6 @@ const Order = ({ list, dispatch }) => {
   );
 };
 
-export default connect(({ orderReducer: { list } }) => ({
-  list
+export default connect(state => ({
+  list: state.orderReducer.list
 }))(Order);

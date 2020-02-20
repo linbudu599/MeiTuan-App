@@ -1,82 +1,134 @@
 # 美团外卖 APP 仿真版
 
-> 常年以美团为生，会员一年一年的买，红包有时候买满还不够用的我，三餐/夜宵/水果/给女朋友点奶茶，这次看到这个项目就感觉按耐不住了...
-> 但是这个项目有几个问题：
->
-> - 依赖版本过低或是缺失，比如 `babel` 还是 6，webpack 和各种插件/loader 版本也挺老的，还有，没有 `webpackbar` 导致我感觉打包过程没氛围（？）
-> - 目录结构，emmm 太没有美感了
-> - 组件复用及拆分做的不是很到位
-> - 代码格式，看了一下好像 UI 和逻辑还是有些耦合
-> - mock 数据的方式是文件夹和一堆 JSON 文件
-> - ...
->
-> 那还说个 🔨，重构啊！
-
 ## 重构计划
 
-- [x] 升级核心依赖，添加辅助依赖
+淦，这玩意没法重构啊，遇到了几个问题：
 
-  - Babel --> 7.0
-  - lint 工具
-  - Webpack 优化插件
-  - ...
+- 依赖，牵一发而动全身，想升级到`React-Redux@7`来使用`useSelector`和`useDispatch`，结果整个崩掉了...
 
-- [ ] 区分开发/测试/部署环境
-- [x] Hooks、FC 初步重构所有组件，一个类组件不留
-- [ ] tsx 重构组件，耦合 ⬇ 内聚 ⬆
-- [ ] Koa & Ts 搭建服务端，提供 RestFul Api（如果学了 GraphQL 就上它）
-- [ ] 单元测试、UI 测试等
-- [ ] 优化样式表现
-- [ ] 添加更多功能
-- [ ] （终极版）使用 React Native 重构
+- 说是MPA，但其实没有啥意义，因为路由跳转只是简单的`window.location.href`，组成它的几个SPA也很简单...
 
-## 原有结构整理
+- 但是之前完成这个项目的过程我还是收获很多的，大概是19年10月，毕竟这是第二个还是第三个React完成的项目。准备整理一下以前做这个项目期间的笔记和收获(；′⌒`)。
 
-```text
-目 录 结 构
-| - config/ ----- webpack 配置
-| - dev/ ----- 暂时的mock文件
-| - router/ ----- 服务端路由
-| - server/ ----- 服务端入口
-| - src/
-| | - component/ ----- 组件
-| | - page/
-    | - category/ -----
-    | - detail/ -----
-    | - evalution/ -----
-    | - index/ -----
-  | - static/ ----- 美团token、样式转化文件
+## 复盘
 
+### 首次接触的NPM包
 
+#### `React-Router-Redux`(`redux-simple-router`)
+
+用于使路由与应用数据保持同步，使得你可以倒退/回放/重置数据等，这个库会确保react-router和redux同步。在这个应用里的主要用法是当切换路由时能够自动切换页面数据。
+
+```js
+import createHistory from "history/createHashHistory";
+import { routerMiddleware } from "react-router-redux";
+// 创建基于hash的history
+const history = createHistory();
+// 创建初始化tab
+history.replace("home");
+// 创建history的Middleware
+const historyMiddl = routerMiddleware(history);
+const store = createStore(mainReducer, applyMiddleware(thunk, historyMiddl));
+
+// index.js
+<Provider store={store}>
+    <ConnectedRouter history={history}>
+      <Container />
+    </ConnectedRouter>
+  </Provider>,
 ```
 
-### [history](https://github.com/ReactTraining/history/tree/master/docs)
+#### React-Loadable
 
-对浏览器 `History` `Location` API 的增强（封装），这里使用了其 `createHashHistory` api，创建基于 hash 的 history 栈。
+实现懒加载。和React-Router一起用。
 
-### react-router-redux(5.0.0-alpha.9)
-
-解决了 redux 和 react-router 协作的问题，属于 redux 的中间件。这里将 `history` 和 `react-router-redux` 结合起来作为 react-redux 的中间件，能够将 history 接收到的变化反馈到 store 中（dispatch action）。同时可以使用 redux 的方式去操作 react-router，例如跳转 url 可以通过 dispatch 来执行。本质上好像就是把 react-router 原本私有的状态也交给 redux 管理了。
-
-```javascript
-<Provider store={store}>{/*react-redux*/}
-  <ConnectedRouter history={history}>
-    <Container />
-  </ConnectedRouter>
-</Provider>,
-```
-
-（!这个仓库已经不维护了，估计要寻找新的替代品）
-
-### 开启 webpack HMR
-
-- 全局开启代码热替换 (HotModuleReplacementPlugin)
-- 插入热替换代码 module.hot.accept
-
-```javascript
-// 如果更改了reducer，则重新赋值reducer，来保持HMR完整性
-module.hot.accept("./reducers/main", () => {
-  const nextRootReducer = require("./reducers/main.js").default;
-  store.replaceReducer(nextRootReducer);
+```js
+const Order = Loadable({
+  loader: () => import(/* webpackChunkName: "order" */ "../Order/Order"),
+  loading: Loading
 });
 ```
+
+### 首次学习的...技巧？
+
+#### 多页面应用路由
+
+```js
+window.history.back();
+// 因为有react-router-redux，所以会同步
+window.location.href="./category.html";
+```
+
+#### webpack热重载
+
+先通过plugin开启HMR，然后它的接口会被暴露在`module.hot`上。
+
+手动插入热替换代码：`module.hot.accept`
+
+多页面中，由于有多个SPA对应各自的Reducer，因此我们需要在更新时只更换给定的模块的基础上修改根Reducer。在这里还和React-Hot-Loader协作。
+
+```js
+// 每个独立的SPA都需要整一下
+if (module.hot) {
+  module.hot.accept("./reducers/main", () => {
+    // 使用更新过的模块替换reducer
+    const nextRootReducer = require("./reducers/main.js").default;
+    store.replaceReducer(nextRootReducer);
+  });
+}
+```
+
+#### NavLink
+
+在`<Link>`的基础上，它还会为匹配渲染的元素添加属性与参数。如`activeClassName` 与 `activeStyleObject`等
+
+#### 各个页面交互细节
+
+- 评分打星，这里的实现方法是渲染三个部分，满星/半星/空白，但是这里是用原生div配合动态类名，感觉做成一个组件`<Star>`会更好。
+
+- ScrollView组件
+
+  - 主要是判断当`clientHeight`+`ScrollTop`加起来（即上半部分，包括不可见区域）距底部距离大于一定值时触发回调，这里还多了一个`readyToLoad`起到类似锁的作用。
+
+  ```js
+    const ScrollView = ({ isend, readyToLoad, loadCallback,    children }) => {
+      useEffect(() => {
+        window.addEventListener("scroll", onLoadPage);
+        return () => window.removeEventListener("scroll", onLoadPage);
+      }, []);
+
+      const onLoadPage = () => {
+        let clientHeight = document.documentElement.clientHeight;
+        let scrollHeight = document.body.scrollHeight;
+        let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop;
+
+        let proLoadDis = 30;
+
+        if (scrollTop + clientHeight >= scrollHeight - proLoadDis) {
+          if (!isend) {
+            if (!readyToLoad) {
+              return;
+            }
+            loadCallback && loadCallback();
+          }
+        }
+      };
+
+      return (
+        <div className="scrollview">
+          {children}
+          <Loading isend={isend} />
+        </div>
+      );
+    };
+
+    export default connect(({ scrollViewReducer: { readyToLoad } }) => ({
+      readyToLoad
+    }))(ScrollView);
+  ```
+
+#### 数据流
+
+其实我感觉这个数据流还是有点小复杂的，特别是不使用Dva一类的库简化操作的话，原生redux的一堆模板代码真的看的人心烦意乱。
+尤其是商家筛选和选购商品部份...
+这一部分的逻辑待整理，因为还挺值得学习的。

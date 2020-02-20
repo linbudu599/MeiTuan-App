@@ -1,49 +1,62 @@
-import React from "react";
+import './StarScore.scss';
 
-import "./StarScore.scss";
+import React from 'react';
 
-const StarScore = ({ score }) => {
-  const renderScore = () => {
-    let wm_poi_score = score || "";
+/**
+ * StarScore组件
+ * @description <StarScore score={num}/> 
+ */
 
-    let scores = wm_poi_score.toString();
+class StarScore extends React.Component {
+    /**
+     * 渲染5颗星得分方法
+     *  @param {*} data 
+     */
+    renderScore(){
+        let wm_poi_score = this.props.score || '';
 
-    let scoreArray = scores.split(".");
+        let score = wm_poi_score.toString();
 
-    // 满星个数
-    let fullstar = parseInt(scoreArray[0]);
+        let scoreArray = score.split('.');
 
-    // 0.5即以上记半颗星，否则不记录
-    // 半星个数
-    let halfstar = parseInt(scoreArray[1]) >= 5 ? 1 : 0;
+        // 满星个数
+        let fullstar = parseInt(scoreArray[0]);
 
-    // 0星个数
-    let nullstar = 5 - fullstar - halfstar;
+        // 半星个数
+        let halfstar = parseInt(scoreArray[1]) >= 5 ? 1 : 0;
 
-    let starjsx = [];
+        // 0星个数
+        let nullstar = 5 - fullstar - halfstar;
 
-    // 渲染满星jsx
-    for (let i = 0; i < fullstar; i++) {
-      starjsx.push(<div key={i + "full"} className="star fullstar"></div>);
+        let starjsx = [];
+
+
+        // 渲染满星jsx
+        for (let i = 0 ; i < fullstar ; i++) {
+            starjsx.push(<div key={i + 'full'} className="star fullstar"></div>)
+        }
+
+        // 渲染满星jsx
+        if (halfstar) {
+            for (let j = 0 ; j < halfstar ; j++) {
+                starjsx.push(<div key={j + 'half'} className="star halfstar"></div>)
+            }
+        }
+
+        // 渲染0星jsx
+        if (nullstar) {
+            for (let k = 0 ; k < nullstar ; k++) {
+                starjsx.push(<div key={k + 'null'} className="star nullstar"></div>)
+            }
+        }
+
+        return starjsx;
+    }
+    render(){
+        return <div className="star-score">{this.renderScore()}</div>;
     }
 
-    // 渲染满星jsx
-    if (halfstar) {
-      for (let j = 0; j < halfstar; j++) {
-        starjsx.push(<div key={j + "half"} className="star halfstar"></div>);
-      }
-    }
-
-    // 渲染0星jsx
-    if (nullstar) {
-      for (let k = 0; k < nullstar; k++) {
-        starjsx.push(<div key={k + "null"} className="star nullstar"></div>);
-      }
-    }
-
-    return starjsx;
-  };
-  return <div className="star-score">{renderScore()}</div>;
-};
+}
 
 export default StarScore;
+

@@ -10,7 +10,7 @@ const My = () => {
           className="avatar"
           src="http://i.waimai.meituan.com/static/img/default-avatar.png"
         />
-        <p className="nickname">美团老用戶 &gt;</p>
+        <p className="nickname">美团小骑手 &gt;</p>
       </div>
       <div className="content">
         <ul className="items">

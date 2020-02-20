@@ -59,13 +59,13 @@ const clearCar = (state) =>{
         let spus = list[i].spus || [];
         for (let j = 0 ; j < spus.length ; j++) {
             spus[j].chooseCount = 0;
-  
+
         }
     }
     return {...state, listData: JSON.parse(JSON.stringify(listData)) };
 
 }
- 
+
 
 const menuReducer = (state = initState, action) => {
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 
 import ListItem from "component/ListItem/ListItem.jsx";
@@ -10,16 +10,12 @@ import "./ContentList.scss";
 
 const ContentList = ({ list, page, dispatch, isend }) => {
   useEffect(() => {
-    console.log("init");
     fetchData();
-    console.log(page);
     return () => {};
   }, []);
-  console.log("out" + page);
 
-  const onLoadPage = p => {
-    if (p <= 3) {
-      console.log(p);
+  const onLoadPage = () => {
+    if (page <= 3) {
       fetchData();
     }
   };
@@ -30,7 +26,7 @@ const ContentList = ({ list, page, dispatch, isend }) => {
 
   return (
     <div className="list-content">
-      <ScrollView loadCallback={onLoadPage(page)} isend={isend}>
+      <ScrollView loadCallback={onLoadPage} isend={isend}>
         {list.map((item, index) => {
           return <ListItem key={index} itemData={item}></ListItem>;
         })}
@@ -40,7 +36,7 @@ const ContentList = ({ list, page, dispatch, isend }) => {
 };
 
 export default connect(({ contentListReducer: { list, page, isend } }) => ({
-  list,
-  page,
-  isend
+  list: list,
+  page: page,
+  isend: isend
 }))(ContentList);
