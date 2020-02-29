@@ -8,7 +8,7 @@
 
 - 说是MPA，但其实没有啥意义，因为路由跳转只是简单的`window.location.href`，组成它的几个SPA也很简单...
 
-- 但是之前完成这个项目的过程我还是收获很多的，大概是19年10月，毕竟这是第二个还是第三个React完成的项目。准备整理一下以前做这个项目期间的笔记和收获(；′⌒`)。
+- 但是之前完成这个项目的过程我还是收获很多的，大概是19年10月，毕竟这是第二个还是第三个React完成的项目。整理一下以前做这个项目期间的笔记和收获(；′⌒`)。
 
 ## 复盘
 
@@ -39,7 +39,7 @@ const store = createStore(mainReducer, applyMiddleware(thunk, historyMiddl));
 
 #### React-Loadable
 
-实现懒加载。和React-Router一起用。
+实现懒加载。和React-Router一起用很快乐。
 
 ```js
 const Order = Loadable({
@@ -47,6 +47,10 @@ const Order = Loadable({
   loading: Loading
 });
 ```
+
+#### React-Hot-Loader
+
+实现React组件的热更新。
 
 ### 首次学习的...技巧？
 
@@ -126,9 +130,3 @@ if (module.hot) {
       readyToLoad
     }))(ScrollView);
   ```
-
-#### 数据流
-
-其实我感觉这个数据流还是有点小复杂的，特别是不使用Dva一类的库简化操作的话，原生redux的一堆模板代码真的看的人心烦意乱。
-尤其是商家筛选和选购商品部份...
-这一部分的逻辑待整理，因为还挺值得学习的。
